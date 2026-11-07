@@ -43,6 +43,7 @@ class QLearningAgent(ReinforcementAgent):
         ReinforcementAgent.__init__(self, **args)
 
         "*** YOUR CODE HERE ***"
+        self.qvalues = util.Counter() #dictonary with key (state, action)
 
     def getQValue(self, state, action):
         """
@@ -51,6 +52,7 @@ class QLearningAgent(ReinforcementAgent):
           or the Q node value otherwise
         """
         "*** YOUR CODE HERE ***"
+        return self.qvalues[(state, action)]
         util.raiseNotDefined()
 
 
@@ -62,6 +64,18 @@ class QLearningAgent(ReinforcementAgent):
           terminal state, you should return a value of 0.0.
         """
         "*** YOUR CODE HERE ***"
+        actions = self.getLegalActions(state)
+        best_q = float('-inf') # -inf because the best qvalue can also be negative
+        if len(actions) == 0:
+            return 0.0
+
+        for action in actions:
+            new_q = self.getQValue(state, action)
+            if best_q < new_q:
+                best_q = new_q
+
+
+        return best_q
         util.raiseNotDefined()
 
     def computeActionFromQValues(self, state):
@@ -71,6 +85,22 @@ class QLearningAgent(ReinforcementAgent):
           you should return None.
         """
         "*** YOUR CODE HERE ***"
+        actions = self.getLegalActions(state)
+        best_q = float('-inf')
+        best_action = []
+
+        if len(actions) == 0:
+            return None
+
+        for action in actions:
+            new_q = self.getQValue(state, action)
+            if best_q < new_q:
+                best_q = new_q
+                best_action= [action]
+            elif best_q == new_q:
+                best_action.append(action)
+
+        return random.choice(best_action)
         util.raiseNotDefined()
 
     def getAction(self, state):
@@ -102,7 +132,9 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        q_old = self.getQValue(state, action)
+        self.qvalues[(state,action)] = q_old + self.alpha * (reward + self.discount *self.computeValueFromQValues(nextState) - q_old)
+        #util.raiseNotDefined()
 
     def getPolicy(self, state):
         return self.computeActionFromQValues(state)
