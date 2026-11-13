@@ -207,9 +207,7 @@ class ApproximateQAgent(PacmanQAgent):
         """
         "*** YOUR CODE HERE ***"
         features = self.featExtractor.getFeatures(state, action)
-        q_value = 0
-        for feature in features:
-            q_value += numpy.dot(self.weights[feature], features[feature])
+        q_value = features * self.weights
         return q_value
         util.raiseNotDefined()
 
