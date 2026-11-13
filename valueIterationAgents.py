@@ -69,6 +69,14 @@ class ValueIterationAgent(ValueEstimationAgent):
                 if self.mdp.isTerminal(state):
                     continue
 
+                best_action = self.computeActionFromValues(state)
+                if best_action is not None:
+                    # HERE is where the value gets updated!
+                    new_values[state] = self.computeQValueFromValues(state, best_action)
+            
+            # 3. Overwrite self.values for the next iteration
+            self.values = new_values
+
 
     def getValue(self, state):
         """
@@ -105,11 +113,11 @@ class ValueIterationAgent(ValueEstimationAgent):
         actions = self.mdp.getPossibleActions(state)
         if not actions:
             return None
-        best_q = 0
-        best_action = ''
+        best_q = float('-inf')
+        best_action = None
         for action in actions:
             q = self.computeQValueFromValues(state, action)
-            if best_q > q:
+            if q > best_q:
                 best_q = q
                 best_action = action
         
