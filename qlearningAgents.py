@@ -206,7 +206,10 @@ class ApproximateQAgent(PacmanQAgent):
           where * is the dotProduct operator
         """
         "*** YOUR CODE HERE ***"
-        q_value = numpy.dot(self.weights[(state,action)], self.featExtractor.getFeatures(state,action)[(state,action)])
+        features = self.featExtractor.getFeatures(state, action)
+        q_value = 0
+        for feature in features:
+            q_value += numpy.dot(self.weights[feature], features[feature])
         return q_value
         util.raiseNotDefined()
 
@@ -220,7 +223,6 @@ class ApproximateQAgent(PacmanQAgent):
         features = self.featExtractor.getFeatures(state, action)
         for feature in features:
             self.weights[feature] = self.weights[feature] + self.alpha * difference * features[feature]
-            print(self.weights[feature])
         #util.raiseNotDefined()
 
     def final(self, state):
@@ -232,5 +234,4 @@ class ApproximateQAgent(PacmanQAgent):
         if self.episodesSoFar == self.numTraining:
             # you might want to print your weights here for debugging
             "*** YOUR CODE HERE ***"
-            #print(self.weights)
             pass
